@@ -2,7 +2,11 @@ from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 
 app = Ursina()
-player = FirstPersonController()
+cam = FirstPersonController()
+
+player = Entity(model='cube',
+                origin = (0, 0, -3),
+                parent = cam)
 
 
 class Voxel(Button):

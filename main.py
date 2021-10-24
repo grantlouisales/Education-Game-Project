@@ -1,5 +1,6 @@
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
+from dictionaryOfLetters import letter_dictionary
 
 app = Ursina()
 cam = FirstPersonController()

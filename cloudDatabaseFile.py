@@ -25,5 +25,6 @@ db = firestore.client()
 data = open_data("words.json")
 
 # for word in data["commonWords"]:
-info = {"word": data["commonWords"]}
+
+info = {"words": data["commonWords"]}
 db.collection("Words").document("Common Words").set(info)

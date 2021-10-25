@@ -1,30 +1,44 @@
 from ursina import *
+from ursina import collider
 from ursina.prefabs.first_person_controller import FirstPersonController
+from ursina.mesh_importer  import *
 
 app = Ursina()
-cam = FirstPersonController()
+player = FirstPersonController(collider ='box', speed = 10)
 
-player = Entity(model='cube',
+window.fps_counter.enabled = False
+
+model1 = load_model("table v1.obj")
+player = Entity(model= model1,
                 origin = (0, 0, -3),
-                parent = cam)
+                collider = 'box',
+                texture = 'white_cube',
+                color = color.black)
 
+#camera.parent = player
 
 class Voxel(Button):
     def __init__(self, position=(0,0,0)):
         super().__init__(
             parent = scene,
             position = position,
-            model = 'cube',
+            model = 'sphere',
             origin_y = .5,
             texture = 'white_cube',
+            collider = 'box',
             color = color.color(0, 0, random.uniform(.9, 1.0)),
             highlight_color = color.lime,
         )
 
-for z in range(100):
-    for x in range(3):
-        voxel = Voxel(position=(x,0,z))
 
 
+
+ground = Entity(model = 'plane',
+                scale = (100,2,100),
+                texture = 'white_cube',
+                color = color.color(0, 0, random.uniform(.9, 1.0)),
+                collider = 'box',
+                texture_scale = (50,50))
+Sky()
 app.run()
 

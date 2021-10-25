@@ -1,7 +1,11 @@
 from ursina import *
 from ursina import collider
 from ursina.prefabs.first_person_controller import FirstPersonController
+<<<<<<< HEAD
 from ursina.mesh_importer  import *
+=======
+from dictionaryOfLetters import letter_dictionary
+>>>>>>> d08e74a3acbd4dff2d81724f910dba640b9ca97a
 
 app = Ursina()
 player = FirstPersonController(collider ='box', speed = 10)

@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+from dictionaryOfLetters import letter_dictionary
 import json
 
 cred = credentials.Certificate("serviceAccountKey.json")
@@ -28,3 +29,4 @@ data = open_data("words.json")
 
 info = {"words": data["commonWords"]}
 db.collection("Words").document("Common Words").set(info)
+db.collection("Letter Dictionary").document("Alphabet").set(letter_dictionary)

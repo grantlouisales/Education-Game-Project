@@ -12,6 +12,3 @@ letter_dictionary = {"a": "resources\letters\A_gold.png", "b": "resources\letter
                      "s": "resources\letters\S_gold.png", "t": "resources\letters\T_gold.png", "u": "resources\letters\letterU_gold.png",
                      "v": "resources\letters\V_gold.png", "w": "resources\letters\W_gold.png", "x": "resources\letters\X_gold.png",
                      "y": "resources\letters\Y_gold.png", "z": "resources\letters\Z_gold.png"}
-
-im = Image.open(letter_dictionary["u"])
-im.show()

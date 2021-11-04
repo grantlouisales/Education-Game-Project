@@ -20,6 +20,15 @@ class MyGameWindow(arcade.Window):
         
 
     def on_update(self, delta_time):
+        if self.player_y > 720:
+            self.player_y = 30
+        if self.player_y < 0:
+            self.player_y = 690
+        if self.player_x > 1280:
+            self.player_x = 50
+        if self.player_x < 0:
+            self.player_x = 1250
+
         self.sprite1.set_position(self.player_x, self.player_y)
 
 

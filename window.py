@@ -1,4 +1,13 @@
 import arcade
+import random
+
+SPRITE_SCALING = 1
+
+
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
+SCREEN_TITLE = "EDUCATIONAL GAME"
+
 
 MOVEMENT_SPEED = 5
 
@@ -11,13 +20,13 @@ class Player(arcade.Sprite):
 
         if self.left < 0:
             self.left = 0
-        elif self.right > 1280 - 1:
-            self.right = 1280 - 1
+        elif self.right > SCREEN_WIDTH - 1:
+            self.right = SCREEN_WIDTH - 1
 
         if self.bottom < 0:
             self.bottom = 0
-        elif self.top > 720 - 1:
-            self.top = 720 - 1
+        elif self.top > SCREEN_HEIGHT - 1:
+            self.top = SCREEN_HEIGHT - 1
 
 class MyGameWindow(arcade.Window):
     def __init__(self, width, height, title):
@@ -36,10 +45,10 @@ class MyGameWindow(arcade.Window):
         self.player_list = arcade.SpriteList()
 
         # Set up player
-        self.player_sprite = Player(":resources:images/animated_characters/female_person/femalePerson_idle.png", 1)
+        self.player_sprite = Player(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING)
 
-        self.player_sprite.center_x = self.width / 2
-        self.player_sprite.center_y = self.height / 2
+        self.player_sprite.center_x = SCREEN_WIDTH / 2
+        self.player_sprite.center_y = SCREEN_HEIGHT / 2
         self.player_list.append(self.player_sprite)
 
     def on_draw(self):
@@ -85,7 +94,7 @@ class MyGameWindow(arcade.Window):
         
 
 def main():
-    window = MyGameWindow(1280, 720, "My Game Window")
+    window = MyGameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     window.setup()
     arcade.run()
 

@@ -9,7 +9,7 @@ SCREEN_HEIGHT = 720
 SCREEN_TITLE = "EDUCATIONAL GAME"
 
 
-MOVEMENT_SPEED = 5
+MOVEMENT_SPEED = 7
 
 class Player(arcade.Sprite):
     
@@ -70,11 +70,7 @@ class MyGameWindow(arcade.Window):
 
     def on_key_press(self, key, modifiers):
         # If the player presses a key, update the speed
-        if key == arcade.key.W:
-            self.player_sprite.change_y = MOVEMENT_SPEED
-        elif key == arcade.key.S:
-            self.player_sprite.change_y = -MOVEMENT_SPEED
-        elif key == arcade.key.A:
+        if key == arcade.key.A:
             self.player_sprite.change_x = -MOVEMENT_SPEED
         elif key == arcade.key.D:
             self.player_sprite.change_x = MOVEMENT_SPEED
@@ -87,9 +83,7 @@ class MyGameWindow(arcade.Window):
         # This doesn't work well if multiple keys are pressed.
         # Use 'better move by keyboard' example if you need to
         # handle this.
-        if key == arcade.key.W or key == arcade.key.S:
-            self.player_sprite.change_y = 0
-        elif key == arcade.key.A or key == arcade.key.D:
+        if key == arcade.key.A or key == arcade.key.D:
             self.player_sprite.change_x = 0
         
 

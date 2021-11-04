@@ -21,26 +21,26 @@ class MyGameWindow(arcade.Window):
 
     def on_update(self, delta_time):
         if self.player_y > 720:
-            self.player_y = 30
+            self.player_y = 10
         if self.player_y < 0:
-            self.player_y = 690
+            self.player_y = 720
         if self.player_x > 1280:
-            self.player_x = 50
+            self.player_x = 10
         if self.player_x < 0:
-            self.player_x = 1250
+            self.player_x = 1270
 
         self.sprite1.set_position(self.player_x, self.player_y)
 
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.D:
-            self.player_x += 100
+            self.player_x += 50
         if symbol == arcade.key.A:
-            self.player_x -= 100
+            self.player_x -= 50
         if symbol == arcade.key.W:
-            self.player_y += 100
+            self.player_y += 50
         if symbol == arcade.key.S:
-            self.player_y -= 100
+            self.player_y -= 50
 
 
         

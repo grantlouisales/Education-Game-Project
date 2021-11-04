@@ -37,8 +37,6 @@ class Voxel(Button):
         )
 
 
-
-
 ground = Entity(model = 'plane',
                 scale = (72,2,72),
                 texture = 'white_cube',

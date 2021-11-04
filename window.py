@@ -1,15 +1,18 @@
 import arcade
 import random
 
-SPRITE_SCALING = 1
+SPRITE_SCALING = 0.5
 
 
-SCREEN_WIDTH = 1280
-SCREEN_HEIGHT = 720
+SCREEN_WIDTH = 1215
+SCREEN_HEIGHT = 800
 SCREEN_TITLE = "EDUCATIONAL GAME"
 
 
 MOVEMENT_SPEED = 7
+JUMP_SPEED = 15
+GRAVITY = 1.1
+
 
 class Player(arcade.Sprite):
     
@@ -39,17 +42,28 @@ class MyGameWindow(arcade.Window):
 
         # Set up player info
         self.player_sprite = None
+        self.ground_list = None
+        self.physics_engine = None
 
     def setup(self):
         # Sprite List
         self.player_list = arcade.SpriteList()
+        self.ground_list = arcade.SpriteList()
 
         # Set up player
-        self.player_sprite = Player(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING)
-
-        self.player_sprite.center_x = SCREEN_WIDTH / 2
-        self.player_sprite.center_y = SCREEN_HEIGHT / 2
+        self.player_sprite = Player(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING * 2)
+        self.player_sprite.center_x = 0
+        self.player_sprite.center_y = 130
         self.player_list.append(self.player_sprite)
+
+        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.ground_list, gravity_constant=GRAVITY)
+
+        for x in range(32, SCREEN_WIDTH, 64):
+            # Bottom edge
+            wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
+            wall.center_x = x
+            wall.center_y = 32
+            self.ground_list.append(wall)
 
     def on_draw(self):
         """
@@ -61,9 +75,13 @@ class MyGameWindow(arcade.Window):
 
         # Draw all the sprites.
         self.player_list.draw()
+        self.ground_list.draw()
 
     def on_update(self, delta_time):
         """ Movement and game logic """
+
+        # Physics Update
+        self.physics_engine.update()
 
         # Move the player
         self.player_list.update()
@@ -72,8 +90,11 @@ class MyGameWindow(arcade.Window):
         # If the player presses a key, update the speed
         if key == arcade.key.A:
             self.player_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.D:
+        if key == arcade.key.D:
             self.player_sprite.change_x = MOVEMENT_SPEED
+        if key == arcade.key.SPACE:
+            if self.physics_engine.can_jump():
+                self.player_sprite.change_y = JUMP_SPEED
 
 
     def on_key_release(self, key, modifiers):
@@ -85,6 +106,7 @@ class MyGameWindow(arcade.Window):
         # handle this.
         if key == arcade.key.A or key == arcade.key.D:
             self.player_sprite.change_x = 0
+        
         
 
 def main():

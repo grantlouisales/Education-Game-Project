@@ -15,8 +15,6 @@ GRAVITY = 1.1
 
 
 class Player(arcade.Sprite):
-    
-
     def update(self):
         self.center_x += self.change_x
         self.center_y += self.change_y
@@ -31,6 +29,7 @@ class Player(arcade.Sprite):
         elif self.top > SCREEN_HEIGHT - 1:
             self.top = SCREEN_HEIGHT - 1
 
+
 class MyGameWindow(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
@@ -44,6 +43,7 @@ class MyGameWindow(arcade.Window):
         self.player_sprite = None
         self.ground_list = None
         self.physics_engine = None
+
 
     def setup(self):
         # Sprite List
@@ -65,6 +65,13 @@ class MyGameWindow(arcade.Window):
             wall.center_y = 32
             self.ground_list.append(wall)
 
+        for x in range(600, SCREEN_WIDTH - 300, 64):
+            wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
+            wall.center_x = x
+            wall.center_y = SCREEN_HEIGHT / 2 - 175
+            self.ground_list.append(wall)
+
+
     def on_draw(self):
         """
         Render the screen.
@@ -77,6 +84,7 @@ class MyGameWindow(arcade.Window):
         self.player_list.draw()
         self.ground_list.draw()
 
+
     def on_update(self, delta_time):
         """ Movement and game logic """
 
@@ -85,6 +93,7 @@ class MyGameWindow(arcade.Window):
 
         # Move the player
         self.player_list.update()
+
 
     def on_key_press(self, key, modifiers):
         # If the player presses a key, update the speed
@@ -108,7 +117,6 @@ class MyGameWindow(arcade.Window):
             self.player_sprite.change_x = 0
         
         
-
 def main():
     window = MyGameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     window.setup()

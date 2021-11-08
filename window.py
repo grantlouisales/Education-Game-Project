@@ -19,15 +19,15 @@ class Player(arcade.Sprite):
         self.center_x += self.change_x
         self.center_y += self.change_y
 
-        if self.left < 0:
-            self.left = 0
-        elif self.right > SCREEN_WIDTH - 1:
-            self.right = SCREEN_WIDTH - 1
+        # if self.left < 0:
+        #     self.left = 0
+        # elif self.right > SCREEN_WIDTH - 1:
+        #     self.right = SCREEN_WIDTH - 1
 
-        if self.bottom < 0:
-            self.bottom = 0
-        elif self.top > SCREEN_HEIGHT - 1:
-            self.top = SCREEN_HEIGHT - 1
+        # if self.bottom < 0:
+        #     self.bottom = 0
+        # elif self.top > SCREEN_HEIGHT - 1:
+        #     self.top = SCREEN_HEIGHT - 1
 
 
 class MyGameWindow(arcade.Window):
@@ -43,7 +43,7 @@ class MyGameWindow(arcade.Window):
         self.player_sprite = None
         self.ground_list = None
         self.physics_engine = None
-
+        self.camera = None
 
     def setup(self):
         # Sprite List
@@ -56,9 +56,13 @@ class MyGameWindow(arcade.Window):
         self.player_sprite.center_y = 130
         self.player_list.append(self.player_sprite)
 
+        # Set up physics engine
         self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.ground_list, gravity_constant=GRAVITY)
+ 
+        # Set up camera
+        self.camera = arcade.Camera(self.width, self.height)
 
-        for x in range(32, SCREEN_WIDTH, 64):
+        for x in range(32, SCREEN_WIDTH * 2, 64):
             # Bottom edge
             wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
             wall.center_x = x
@@ -84,6 +88,9 @@ class MyGameWindow(arcade.Window):
         self.player_list.draw()
         self.ground_list.draw()
 
+        # Activate camera
+        self.camera.use()
+
 
     def on_update(self, delta_time):
         """ Movement and game logic """
@@ -93,6 +100,9 @@ class MyGameWindow(arcade.Window):
 
         # Move the player
         self.player_list.update()
+
+        # Position Camera
+        self.center_camera_to_player()
 
 
     def on_key_press(self, key, modifiers):
@@ -115,7 +125,14 @@ class MyGameWindow(arcade.Window):
         # handle this.
         if key == arcade.key.A or key == arcade.key.D:
             self.player_sprite.change_x = 0
-        
+
+    def center_camera_to_player(self):
+        screen_center_x = self.player_sprite.center_x - (self.camera.viewport_width / 2)
+        screen_center_y = self.player_sprite.center_y - (self.camera.viewport_height / 2)  
+
+        player_centered = screen_center_x, screen_center_y
+        self.camera.move_to(player_centered)
+
         
 def main():
     window = MyGameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)

@@ -59,6 +59,7 @@ class MyGameWindow(arcade.Window):
         
         # Name of map file to load
         map_name = ":resources:tiled_maps/map.json"
+        # Map1.tmx - GIVES ERRORS
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -102,6 +103,7 @@ class MyGameWindow(arcade.Window):
         self.physics_engine = arcade.PhysicsEnginePlatformer(
             self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Platforms"]
         )
+
 
 
     def on_draw(self):

@@ -4,13 +4,13 @@ import random
 SPRITE_SCALING = 0.5
 
 
-SCREEN_WIDTH = 1215
-SCREEN_HEIGHT = 800
+SCREEN_WIDTH = 1000
+SCREEN_HEIGHT = 650
 SCREEN_TITLE = "EDUCATIONAL GAME"
 
-
+TILE_SCALING = 0.5
 PLAYER_MOVEMENT_SPEED = 7
-JUMP_SPEED = 15
+JUMP_SPEED = 20
 GRAVITY = 1
 WALL_FRICTION = 0.7
 
@@ -37,6 +37,8 @@ class MyGameWindow(arcade.Window):
 
         # Our Scene Object
         self.scene = None
+        
+        self.tile_map = None
 
         arcade.set_background_color(arcade.color.AERO_BLUE)
 
@@ -52,35 +54,56 @@ class MyGameWindow(arcade.Window):
 
     def setup(self):
 
+        # Create Scene
         self.scene = arcade.Scene()
-        # Sprite List
-        # self.player_list = arcade.SpriteList()
-        # self.ground_list = arcade.SpriteList()
+        
+        # Name of map file to load
+        map_name = ":resources:tiled_maps/map.json"
+
+        # Layer specific options are defined based on Layer names in a dictionary
+        # Doing this will make the SpriteList for the platforms layer
+        # use spatial hashing for detection.
+        layer_options = {
+            "Platforms": {
+                "use_spatial_hash": True,
+            },
+
+        }
+
+        # Read in the tiled map
+        self.tile_map = arcade.load_tilemap(
+            map_name, TILE_SCALING, layer_options)
+
+        # Initialize Scene with our TileMap, this will automatically add all layers
+        # from the map as SpriteLists in the scene in the proper order.
+        self.scene = arcade.Scene.from_tilemap(self.tile_map)
+
+        # Add these sprite lists to the scene with names.
         self.scene.add_sprite_list("Player")
         self.scene.add_sprite_list("Walls", use_spatial_hash = True)
 
         # Set up player
         self.player_sprite = arcade.Sprite(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING * 2)
-        self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 130
+        self.player_sprite.center_x = 128
+        self.player_sprite.center_y = 128
+
         # self.player_list.append(self.player_sprite)
         self.scene.add_sprite("Player", self.player_sprite)
+
 
         # Set up camera
         self.camera = arcade.Camera(self.width, self.height)
 
-        for x in range(32, SCREEN_WIDTH * 2, 64):
-            # Bottom edge
-            wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = x
-            wall.center_y = 32
-            # self.ground_list.append(wall)
-            self.scene.add_sprite("Walls", wall)
+        # Set the background color
+        if self.tile_map.background_color:
+            arcade.set_background_color(self.tile_map.background_color)
 
-        # Set up physics engine
+        # Create the 'physics engine'
         self.physics_engine = arcade.PhysicsEnginePlatformer(
-            self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Walls"])
-            
+            self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Platforms"]
+        )
+
+
     def on_draw(self):
         """
         Render the screen.
@@ -89,10 +112,7 @@ class MyGameWindow(arcade.Window):
         # This command has to happen before we start drawing
         arcade.start_render()
 
-        # Draw all the sprites.
-        # self.player_list.draw()
-        # self.ground_list.draw()
-
+        # Draw all of the sprite lists in the scene variable.
         self.scene.draw()
 
         # Activate camera
@@ -101,9 +121,6 @@ class MyGameWindow(arcade.Window):
 
     def on_update(self, delta_time):
         """ Movement and game logic """
-
-        # Move the player
-        # self.player_list.update()
 
         # Physics Update
         self.physics_engine.update()

@@ -5,6 +5,9 @@ import arcade
 
 from constants import *
 
+class Player(arcade.Sprite):
+    def __init__(self):
+        pass
 
 class MyGame(arcade.Window):
     """
@@ -115,7 +118,6 @@ class MyGame(arcade.Window):
         if key == arcade.key.UP or key == arcade.key.W:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = PLAYER_JUMP_SPEED
-                arcade.play_sound(self.jump_sound)
         elif key == arcade.key.LEFT or key == arcade.key.A:
             self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
         elif key == arcade.key.RIGHT or key == arcade.key.D:

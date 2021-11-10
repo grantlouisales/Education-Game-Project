@@ -148,6 +148,12 @@ def main():
     window = MyGame()
     window.setup()
     arcade.run()
+    
+    # Send users to main menu.
+    # Commented out to avoid errors before seperating classes more professionally.
+#     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+#     window.show_view(MenuView.MenuView())
+#     arcade.run()
 
 
 if __name__ == "__main__":

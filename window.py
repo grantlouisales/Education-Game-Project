@@ -1,48 +1,34 @@
+"""
+Platformer Game
+"""
 import arcade
-import random
 
-SPRITE_SCALING = 0.5
-
-
-SCREEN_WIDTH = 1215
-SCREEN_HEIGHT = 800
-SCREEN_TITLE = "EDUCATIONAL GAME"
+from constants import *
 
 
-MOVEMENT_SPEED = 7
-JUMP_SPEED = 15
-GRAVITY = 1.1
+class MyGame(arcade.Window):
+    """
+    Main application class.
+    """
 
+    def __init__(self):
 
-class Player(arcade.Sprite):
-    def update(self):
-        self.center_x += self.change_x
-        self.center_y += self.change_y
+        # Call the parent class and set up the window
+        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
 
-        # if self.left < 0:
-        #     self.left = 0
-        # elif self.right > SCREEN_WIDTH - 1:
-        #     self.right = SCREEN_WIDTH - 1
+        # Our TileMap Object
+        self.tile_map = None
 
-        # if self.bottom < 0:
-        #     self.bottom = 0
-        # elif self.top > SCREEN_HEIGHT - 1:
-        #     self.top = SCREEN_HEIGHT - 1
+        # Our Scene Object
+        self.scene = None
 
-
-class MyGameWindow(arcade.Window):
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
-
-        arcade.set_background_color(arcade.color.AERO_BLUE)
-
-        # Variables that will hold sprite list
-        self.player_list = None
-
-        # Set up player info
+        # Separate variable that holds the player sprite
         self.player_sprite = None
-        self.ground_list = None
+
+        # Our physics engine
         self.physics_engine = None
+
+        # A Camera that can be used for scrolling the screen
         self.camera = None
 
     def setup(self):
@@ -62,83 +48,126 @@ class MyGameWindow(arcade.Window):
         # Set up camera
         self.camera = arcade.Camera(self.width, self.height)
 
-        for x in range(32, SCREEN_WIDTH * 2, 64):
-            # Bottom edge
-            wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = x
-            wall.center_y = 32
-            self.ground_list.append(wall)
+        arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
-        for x in range(600, SCREEN_WIDTH - 300, 64):
-            wall = arcade.Sprite(":resources:images/tiles/boxCrate_double.png", SPRITE_SCALING)
-            wall.center_x = x
-            wall.center_y = SCREEN_HEIGHT / 2 - 175
-            self.ground_list.append(wall)
+    def setup(self):
+        """Set up the game here. Call this function to restart the game."""
 
+        # Setup the Cameras
+        self.camera = arcade.Camera(self.width, self.height)
+        self.gui_camera = arcade.Camera(self.width, self.height)
+
+        # Name of map file to load
+        map_name = "Map1Hard.json"
+
+        # Layer specific options are defined based on Layer names in a dictionary
+        # Doing this will make the SpriteList for the platforms layer
+        # use spatial hashing for detection.
+        layer_options = {
+            "Platforms": {
+                "use_spatial_hash": True,
+            },
+        }
+
+        # Read in the tiled map
+        self.tile_map = arcade.load_tilemap(
+            map_name, TILE_SCALING, layer_options)
+
+        # Initialize Scene with our TileMap, this will automatically add all layers
+        # from the map as SpriteLists in the scene in the proper order.
+        self.scene = arcade.Scene.from_tilemap(self.tile_map)
+
+        # Set up the player, specifically placing it at these coordinates.
+        image_source = ":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png"
+        self.player_sprite = arcade.Sprite(image_source, CHARACTER_SCALING)
+        self.player_sprite.center_x = 150
+        self.player_sprite.center_y = 150
+        self.scene.add_sprite("Player", self.player_sprite)
+
+        # --- Other stuff
+        # Set the background color
+        if self.tile_map.background_color:
+            arcade.set_background_color(self.tile_map.background_color)
+
+        # Create the 'physics engine'
+        self.physics_engine = arcade.PhysicsEnginePlatformer(
+            self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Platforms"]
+        )
 
     def on_draw(self):
-        """
-        Render the screen.
-        """
+        """Render the screen."""
 
-        # This command has to happen before we start drawing
+        # Clear the screen to the background color
         arcade.start_render()
 
-        # Draw all the sprites.
-        self.player_list.draw()
-        self.ground_list.draw()
-
-        # Activate camera
+        # Activate the game camera
         self.camera.use()
 
+        # Draw our Scene
+        self.scene.draw()
 
-    def on_update(self, delta_time):
-        """ Movement and game logic """
-
-        # Physics Update
-        self.physics_engine.update()
-
-        # Move the player
-        self.player_list.update()
-
-        # Position Camera
-        self.center_camera_to_player()
-
+        # Activate the GUI camera before drawing GUI elements
+        self.gui_camera.use()
 
     def on_key_press(self, key, modifiers):
-        # If the player presses a key, update the speed
-        if key == arcade.key.A:
-            self.player_sprite.change_x = -MOVEMENT_SPEED
-        if key == arcade.key.D:
-            self.player_sprite.change_x = MOVEMENT_SPEED
-        if key == arcade.key.SPACE:
-            if self.physics_engine.can_jump():
-                self.player_sprite.change_y = JUMP_SPEED
+        """Called whenever a key is pressed."""
 
+        if key == arcade.key.UP or key == arcade.key.W:
+            if self.physics_engine.can_jump():
+                self.player_sprite.change_y = PLAYER_JUMP_SPEED
+                arcade.play_sound(self.jump_sound)
+        elif key == arcade.key.LEFT or key == arcade.key.A:
+            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
+            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+        elif key == arcade.key.SPACE:
+            if self.physics_engine.can_jump():
+                self.player_sprite.change_y = PLAYER_JUMP_SPEED
 
     def on_key_release(self, key, modifiers):
-        """Called when the user releases a key. """
+        """Called when the user releases a key."""
 
-        # If a player releases a key, zero out the speed.
-        # This doesn't work well if multiple keys are pressed.
-        # Use 'better move by keyboard' example if you need to
-        # handle this.
-        if key == arcade.key.A or key == arcade.key.D:
+        if key == arcade.key.LEFT or key == arcade.key.A:
+            self.player_sprite.change_x = 0
+        elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.player_sprite.change_x = 0
 
     def center_camera_to_player(self):
-        
-        screen_center_x = self.player_sprite.center_x - (self.camera.viewport_width / 2)
-        screen_center_y = self.player_sprite.center_y - (self.camera.viewport_height / 2)  
-
+        screen_center_x = self.player_sprite.center_x - \
+            (self.camera.viewport_width / 2)
+        screen_center_y = self.player_sprite.center_y - (
+            self.camera.viewport_height / 2
+        )
+        if screen_center_x < 0:
+            screen_center_x = 0
+        if screen_center_y < 0:
+            screen_center_y = 0
         player_centered = screen_center_x, screen_center_y
+
         self.camera.move_to(player_centered)
 
-        
+    def on_update(self, delta_time):
+        """Movement and game logic"""
+
+        # Move the player with the physics engine
+        self.physics_engine.update()
+
+        # Position the camera
+        self.center_camera_to_player()
+
+
 def main():
-    window = MyGameWindow(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    
+    """Main function"""
+    window = MyGame()
     window.setup()
     arcade.run()
+    
+    # Send users to main menu.
+    # Commented out to avoid errors before seperating classes more professionally.
+#     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+#     window.show_view(MenuView.MenuView())
+#     arcade.run()
 
 
 if __name__ == "__main__":

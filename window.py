@@ -52,7 +52,7 @@ class MyGameWindow(arcade.Window):
 
         # Set up player
         self.player_sprite = Player(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING * 2)
-        self.player_sprite.center_x = 0
+        self.player_sprite.center_x = 32
         self.player_sprite.center_y = 130
         self.player_list.append(self.player_sprite)
 

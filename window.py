@@ -63,14 +63,14 @@ class MyGameWindow(arcade.Window):
         # Set up player
         self.player_sprite = arcade.Sprite(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING * 2)
 
-        self.player_sprite.center_x = 128
-        self.player_sprite.center_y = -500
+        self.player_sprite.center_x = -100
+        self.player_sprite.center_y = -1000
 
         # self.player_list.append(self.player_sprite)
         self.player_list.append(self.player_sprite)
 
         # Name of map file to load
-        map_name = "educationv2work.json"
+        map_name = "Map1Test.json"
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -115,9 +115,9 @@ class MyGameWindow(arcade.Window):
 
         # Draw all of the sprite lists in the scene variable.
         # self.scene.draw()
-        self.player_list.draw()
+        # self.player_list.draw()
         self.wall_list.draw()
-        # self.tile_map.sprite_lists["Platforms"].draw()
+        self.tile_map.sprite_lists["Platforms"].draw()
 
         # Activate camera
         self.camera.use()
@@ -127,7 +127,7 @@ class MyGameWindow(arcade.Window):
         """ Movement and game logic """
 
         # Physics Update
-        self.physics_engine.update()
+        # self.physics_engine.update()
 
         # Position Camera
         self.center_camera_to_player()

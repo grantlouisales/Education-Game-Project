@@ -4,6 +4,7 @@ Platformer Game
 import arcade
 
 from constants import *
+# from MenuView import *
 
 class Player(arcade.Sprite):
     def __init__(self):
@@ -114,7 +115,7 @@ class MyGame(arcade.Window):
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
-        
+
         if key == arcade.key.LEFT or key == arcade.key.A:
             self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
         elif key == arcade.key.RIGHT or key == arcade.key.D:
@@ -157,16 +158,16 @@ class MyGame(arcade.Window):
 
 def main():
     
-    """Main function"""
+    # """Main function"""
     window = MyGame()
     window.setup()
     arcade.run()
     
     # Send users to main menu.
     # Commented out to avoid errors before seperating classes more professionally.
-#     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-#     window.show_view(MenuView.MenuView())
-#     arcade.run()
+    # window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    # window.show_view(MenuView.MenuView())
+    # arcade.run()
 
 
 if __name__ == "__main__":

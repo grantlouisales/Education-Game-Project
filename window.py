@@ -6,9 +6,6 @@ import arcade
 from constants import *
 # from MenuView import *
 
-class Player(arcade.Sprite):
-    def __init__(self):
-        pass
 
 class MyGame(arcade.Window):
     """
@@ -34,6 +31,9 @@ class MyGame(arcade.Window):
 
         # A Camera that can be used for scrolling the screen
         self.camera = None
+
+        self.left_pressed = False
+        self.right_pressed = False
 
     def setup(self):
         # Sprite List
@@ -117,9 +117,9 @@ class MyGame(arcade.Window):
         """Called whenever a key is pressed."""
 
         if key == arcade.key.LEFT or key == arcade.key.A:
-            self.player_sprite.change_x = -PLAYER_MOVEMENT_SPEED
+            self.left_pressed = True
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.player_sprite.change_x = PLAYER_MOVEMENT_SPEED
+            self.right_pressed = True
         elif key == arcade.key.SPACE:
             if self.physics_engine.can_jump():
                 self.player_sprite.change_y = PLAYER_JUMP_SPEED
@@ -128,9 +128,9 @@ class MyGame(arcade.Window):
         """Called when the user releases a key."""
 
         if key == arcade.key.LEFT or key == arcade.key.A:
-            self.player_sprite.change_x = 0
+            self.left_pressed = False
         elif key == arcade.key.RIGHT or key == arcade.key.D:
-            self.player_sprite.change_x = 0
+            self.right_pressed = False
 
     def center_camera_to_player(self):
         screen_center_x = self.player_sprite.center_x - \
@@ -149,6 +149,10 @@ class MyGame(arcade.Window):
     def on_update(self, delta_time):
         """Movement and game logic"""
 
+        if self.left_pressed:
+            self.player_sprite.center_x -= PLAYER_MOVEMENT_SPEED
+        if self.right_pressed:
+            self.player_sprite.center_x += PLAYER_MOVEMENT_SPEED
         # Move the player with the physics engine
         self.physics_engine.update()
 

@@ -2,9 +2,45 @@
 Platformer Game
 """
 import arcade
+from arcade.camera import Camera
+from arcade.scene import Scene
+from arcade.sprite import Sprite
+from arcade.sprite_list.spatial_hash import check_for_collision_with_list
 
 from constants import *
 # from MenuView import *
+class Letters():
+    
+    class Letter(arcade.Sprite):
+        def __init__(self, letter, x, y):
+            super().__init__(f'resources/letters/letter{letter}.png', center_x=x, center_y=y, scale=.1)
+            self.letter = letter
+
+    def __init__(self, scene : Scene):
+        self.collection = []
+        self.letters = arcade.SpriteList()
+        self.scene = scene
+
+    def create_letter(self, letter : str, x, y):
+        letter_sprite = self.Letter(letter, x, y)
+        self.letters.append(letter_sprite)
+        self.scene.add_sprite(f'Letter{letter}', letter_sprite)
+
+    def collect_letter(self, letter : Letter):
+        self.collection.append(letter)
+        index = self.collection.index(letter) + 1
+        letter.center_x, letter.center_y = (index * 50, 50)
+        
+        self.letters.remove(letter)
+        self.scene.remove_sprite_list_by_name(f'Letter{letter.letter}')
+
+    def draw(self, camera : Camera):
+        cam_x, cam_y = camera.position
+        screen_bot = cam_y - camera.viewport_height / 2
+        screen_left = cam_x - camera.viewport_width / 2
+        for letter in self.collection:
+            
+            letter.draw()
 
 
 class MyGame(arcade.Window):
@@ -35,24 +71,26 @@ class MyGame(arcade.Window):
         self.left_pressed = False
         self.right_pressed = False
 
-    def setup(self):
-        # Sprite List
-        self.player_list = arcade.SpriteList()
-        self.ground_list = arcade.SpriteList()
+        
 
-        # Set up player
-        self.player_sprite = Player(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING * 2)
-        self.player_sprite.center_x = 32
-        self.player_sprite.center_y = 130
-        self.player_list.append(self.player_sprite)
+    # def setup(self):
+    #     # Sprite List
+    #     self.player_list = arcade.SpriteList()
+    #     self.ground_list = arcade.SpriteList()
 
-        # Set up physics engine
-        self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.ground_list, gravity_constant=GRAVITY)
+    #     # Set up player
+    #     self.player_sprite = Player(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING * 2)
+    #     self.player_sprite.center_x = 32
+    #     self.player_sprite.center_y = 130
+    #     self.player_list.append(self.player_sprite)
+
+    #     # Set up physics engine
+    #     self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.ground_list, gravity_constant=GRAVITY)
  
-        # Set up camera
-        self.camera = arcade.Camera(self.width, self.height)
+    #     # Set up camera
+    #     self.camera = arcade.Camera(self.width, self.height)
 
-        arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
+    #     arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
@@ -98,6 +136,14 @@ class MyGame(arcade.Window):
             self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Platforms"]
         )
 
+        self.letters = Letters(self.scene)
+        self.letters.create_letter('A', 100, 100)
+        self.letters.create_letter('B', 200, 100)
+        self.letters.create_letter('C', 100, 200)
+
+
+
+
     def on_draw(self):
         """Render the screen."""
 
@@ -106,12 +152,13 @@ class MyGame(arcade.Window):
 
         # Activate the game camera
         self.camera.use()
-
         # Draw our Scene
         self.scene.draw()
 
         # Activate the GUI camera before drawing GUI elements
         self.gui_camera.use()
+
+        self.letters.draw(self.camera)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -158,6 +205,9 @@ class MyGame(arcade.Window):
 
         # Position the camera
         self.center_camera_to_player()
+
+        for letter in check_for_collision_with_list(self.player_sprite, self.letters.letters):
+            self.letters.collect_letter(letter)         
 
 
 def main():

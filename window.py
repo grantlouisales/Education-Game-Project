@@ -21,8 +21,8 @@ class Letters():
         self.letters = arcade.SpriteList()
         self.scene = scene
 
-    def create_letter(self, letter : str, x, y):
-        letter_sprite = self.Letter(letter, x, y)
+    def create_letter(self, letter : str, position):
+        letter_sprite = self.Letter(letter, position[0], position[1])
         self.letters.append(letter_sprite)
         self.scene.add_sprite(f'Letter{letter}', letter_sprite)
 
@@ -137,9 +137,9 @@ class MyGame(arcade.Window):
         )
 
         self.letters = Letters(self.scene)
-        self.letters.create_letter('A', 100, 100)
-        self.letters.create_letter('B', 200, 100)
-        self.letters.create_letter('C', 100, 200)
+        self.letters.create_letter('A', (1000, 1000))
+        self.letters.create_letter('B', (200, 100))
+        self.letters.create_letter('C', (100, 200))
 
 
 
@@ -159,6 +159,7 @@ class MyGame(arcade.Window):
         self.gui_camera.use()
 
         self.letters.draw(self.camera)
+        arcade.draw_text(f'({self.player_sprite.center_x}, {self.player_sprite.center_y})', 10, SCREEN_HEIGHT - 20)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""

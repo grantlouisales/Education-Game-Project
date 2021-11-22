@@ -21,16 +21,19 @@ class Spelling():
             self.letter = letter
 
     def __init__(self, scene : Scene, player : Sprite):
-        self.collection = []
-        self.letter_list = arcade.SpriteList()
+        self.letters_collected = []
+        self.map_letters = arcade.SpriteList()
         self.scene = scene
-        self.curr_word = 'dragon'
-        self.curr_letter = 'd'
+        self.curr_word = None
+        self.curr_letter = None
         self.player = player
+
+        self.get_new_word()
+        self.start_word()
 
     def create_letter(self, letter : str, position):
         letter_sprite = self.Letter(letter, position[0], position[1])
-        self.letter_list.append(letter_sprite)
+        self.map_letters.append(letter_sprite)
         self.scene.add_sprite(f'Letter', letter_sprite)
 
     def collect_letter(self, letter : Letter):
@@ -39,37 +42,42 @@ class Spelling():
 
         self.generate_letters(LOCATIONS, prev_location=letter.position)
 
-        self.collection.append(letter)
-        index = self.collection.index(letter) + 1
+        self.letters_collected.append(letter)
+        index = self.letters_collected.index(letter) + 1
         letter.center_x, letter.center_y = (index * 50, 50)
 
-
     def draw_gui(self):
-        for letter in self.collection:
+        for letter in self.letters_collected:
             letter.draw()
 
+    def start_word(self):
+        self.letters_collected = []
+        self.curr_letter = (self.curr_word[0], 0)
+        self.generate_letters(LOCATIONS)
+
     def get_new_word(self):
-        pass
+        self.curr_word = 'dragon'
 
     def generate_letters(self, pos_list, prev_location=None):
         while True:
             locations = random.sample(pos_list, 3)
             if not prev_location in locations:
                 break
+
         letters = random.sample(string.ascii_lowercase, 2)
-        self.create_letter(self.curr_letter, locations.pop())
+        self.create_letter(self.curr_letter[0], locations.pop())
         for place in locations:
             self.create_letter(letters.pop(), place)
 
     def clear_letters(self):
         self.scene.remove_sprite_list_by_name('Letter')
-        self.letter_list = arcade.SpriteList()
+        self.map_letters = arcade.SpriteList()
 
     def next_letter(self):
-        index = self.curr_word.index(self.curr_letter)
+        index = self.curr_letter[1]
         # if index == len(self.curr_word - 1):
         #     test for correct word
-        self.curr_letter = self.curr_word[index + 1]
+        self.curr_letter = (self.curr_word[index + 1], index + 1)
 
 
 
@@ -167,7 +175,6 @@ class MyGame(arcade.Window):
         )
 
         self.spelling = Spelling(self.scene, self.player_sprite)
-        self.spelling.generate_letters(LOCATIONS)
 
 
 
@@ -196,9 +203,12 @@ class MyGame(arcade.Window):
             self.left_pressed = True
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = True
-        elif key == arcade.key.SPACE:
-            if self.physics_engine.can_jump():
-                self.player_sprite.change_y = PLAYER_JUMP_SPEED
+        elif key == arcade.key.SPACE and self.physics_engine.can_jump():
+            self.player_sprite.change_y = PLAYER_JUMP_SPEED
+        elif key == arcade.key.C:
+            self.spelling.clear_letters()
+            self.spelling.start_word()
+        
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""
@@ -235,7 +245,7 @@ class MyGame(arcade.Window):
         # Position the camera
         self.center_camera_to_player()
 
-        for letter in check_for_collision_with_list(self.player_sprite, self.spelling.letter_list):
+        for letter in check_for_collision_with_list(self.player_sprite, self.spelling.map_letters):
             self.spelling.collect_letter(letter)         
 
 

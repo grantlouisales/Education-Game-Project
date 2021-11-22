@@ -7,70 +7,40 @@ from arcade.scene import Scene
 from arcade.sprite import Sprite
 from arcade.sprite_list.spatial_hash import check_for_collision_with_list
 
-import random
-import string
-import threading
-import time
 from constants import *
 # from MenuView import *
-class Spelling():
+class Letters():
     
     class Letter(arcade.Sprite):
         def __init__(self, letter, x, y):
-            super().__init__(f'resources/letters/letter{str.upper(letter)}.png', center_x=x, center_y=y, scale=.1)
+            super().__init__(f'resources/letters/letter{letter}.png', center_x=x, center_y=y, scale=.1)
             self.letter = letter
 
-    def __init__(self, scene : Scene, player : Sprite):
+    def __init__(self, scene : Scene):
         self.collection = []
-        self.letter_list = arcade.SpriteList()
+        self.letters = arcade.SpriteList()
         self.scene = scene
-        self.curr_word = 'dragon'
-        self.curr_letter = 'd'
-        self.player = player
 
-    def create_letter(self, letter : str, position):
-        letter_sprite = self.Letter(letter, position[0], position[1])
-        self.letter_list.append(letter_sprite)
-        self.scene.add_sprite(f'Letter', letter_sprite)
+    def create_letter(self, letter : str, x, y):
+        letter_sprite = self.Letter(letter, x, y)
+        self.letters.append(letter_sprite)
+        self.scene.add_sprite(f'Letter{letter}', letter_sprite)
 
     def collect_letter(self, letter : Letter):
-        self.clear_letters()
-        self.next_letter()
-
-        self.generate_letters(LOCATIONS, prev_location=letter.position)
-
         self.collection.append(letter)
         index = self.collection.index(letter) + 1
         letter.center_x, letter.center_y = (index * 50, 50)
+        
+        self.letters.remove(letter)
+        self.scene.remove_sprite_list_by_name(f'Letter{letter.letter}')
 
-
-    def draw_gui(self):
+    def draw(self, camera : Camera):
+        cam_x, cam_y = camera.position
+        screen_bot = cam_y - camera.viewport_height / 2
+        screen_left = cam_x - camera.viewport_width / 2
         for letter in self.collection:
+            
             letter.draw()
-
-    def get_new_word(self):
-        pass
-
-    def generate_letters(self, pos_list, prev_location=None):
-        while True:
-            locations = random.sample(pos_list, 3)
-            if not prev_location in locations:
-                break
-        letters = random.sample(string.ascii_lowercase, 2)
-        self.create_letter(self.curr_letter, locations.pop())
-        for place in locations:
-            self.create_letter(letters.pop(), place)
-
-    def clear_letters(self):
-        self.scene.remove_sprite_list_by_name('Letter')
-        self.letter_list = arcade.SpriteList()
-
-    def next_letter(self):
-        index = self.curr_word.index(self.curr_letter)
-        # if index == len(self.curr_word - 1):
-        #     test for correct word
-        self.curr_letter = self.curr_word[index + 1]
-
 
 
 class MyGame(arcade.Window):
@@ -166,8 +136,10 @@ class MyGame(arcade.Window):
             self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Platforms"]
         )
 
-        self.spelling = Spelling(self.scene, self.player_sprite)
-        self.spelling.generate_letters(LOCATIONS)
+        self.letters = Letters(self.scene)
+        self.letters.create_letter('A', 100, 100)
+        self.letters.create_letter('B', 200, 100)
+        self.letters.create_letter('C', 100, 200)
 
 
 
@@ -186,8 +158,7 @@ class MyGame(arcade.Window):
         # Activate the GUI camera before drawing GUI elements
         self.gui_camera.use()
 
-        self.spelling.draw_gui()
-        arcade.draw_text(f'({self.player_sprite.center_x}, {self.player_sprite.center_y})', 10, SCREEN_HEIGHT - 20)
+        self.letters.draw(self.camera)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""
@@ -235,8 +206,8 @@ class MyGame(arcade.Window):
         # Position the camera
         self.center_camera_to_player()
 
-        for letter in check_for_collision_with_list(self.player_sprite, self.spelling.letter_list):
-            self.spelling.collect_letter(letter)         
+        for letter in check_for_collision_with_list(self.player_sprite, self.letters.letters):
+            self.letters.collect_letter(letter)         
 
 
 def main():

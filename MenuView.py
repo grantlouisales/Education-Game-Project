@@ -54,10 +54,12 @@ class MenuView(arcade.View):
         )
 
     def on_click_easy(self, _event: arcade.gui.UIOnClickEvent):
+        self.diff_level = "Map1Easy.json"
         game_view = window.MyGame()
         self.window.show_view(game_view)
 
     def on_click_medium(self, _event: arcade.gui.UIOnClickEvent):
+        self.diff_level = "Map1Medium.json"
         game_view = window.MyGame()
         self.window.show_view(game_view)
 

@@ -108,6 +108,8 @@ class MyGame(arcade.Window):
 
         self.left_pressed = False
         self.right_pressed = False
+        
+        self.diff_level = MenuView.get_level()
 
         
 
@@ -138,7 +140,8 @@ class MyGame(arcade.Window):
         self.gui_camera = arcade.Camera(self.width, self.height)
 
         # Name of map file to load
-        map_name = "Map1Hard.json"
+#         map_name = "Map1Hard.json"
+        map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -252,15 +255,16 @@ class MyGame(arcade.Window):
 def main():
     
     # """Main function"""
-    window = MyGame()
-    window.setup()
-    arcade.run()
+#     window = MyGame()
+#     window.setup()
+#     arcade.run()
     
     # Send users to main menu.
     # Commented out to avoid errors before seperating classes more professionally.
-    # window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    # window.show_view(MenuView.MenuView())
-    # arcade.run()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    start_view = MenuView()
+    window.show_view(start_view)
+    arcade.run()
 
 
 if __name__ == "__main__":

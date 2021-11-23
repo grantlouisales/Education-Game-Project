@@ -12,7 +12,7 @@ import string
 import threading
 import time
 from constants import *
-# from MenuView import *
+from MenuView import *
 class Spelling():
     
     class Letter(arcade.Sprite):

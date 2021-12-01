@@ -39,14 +39,15 @@ class Spelling():
         self.scene.add_sprite(f'Letter', letter_sprite)
 
     def collect_letter(self, letter : Letter):
+        self.letters_collected.append(letter)
+        index = self.letters_collected.index(letter) + 1
+        letter.center_x, letter.center_y = (index * 50, 50)
+        
         self.clear_letters()
         self.next_letter()
 
         self.generate_letters(LOCATIONS, prev_location=letter.position)
 
-        self.letters_collected.append(letter)
-        index = self.letters_collected.index(letter) + 1
-        letter.center_x, letter.center_y = (index * 50, 50)
 
     def draw_gui(self):
         for letter in self.letters_collected:
@@ -78,11 +79,20 @@ class Spelling():
 
     def next_letter(self):
         index = self.curr_letter[1]
-        # if index == len(self.curr_word - 1):
-        #     test for correct word
-        self.curr_letter = (self.curr_word[index + 1], index + 1)
+        if index == len(self.curr_word) - 1:
+            if self.assemble_word() == self.curr_word:
+                self.get_new_word()
+                self.start_word()
+            else:
+                self.start_word()
+        else:
+            self.curr_letter = (self.curr_word[index + 1], index + 1)
 
-
+    def assemble_word(self):
+        word = ''
+        for letter in self.letters_collected:
+            word += letter.letter
+        return word
 
 class MyGame(arcade.Window):
     """

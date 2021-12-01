@@ -110,9 +110,7 @@ class MyGame(arcade.Window):
         self.right_pressed = False
         
         self.diff_level = MenuView.get_level()
-
         
-
     # def setup(self):
     #     # Sprite List
     #     self.player_list = arcade.SpriteList()
@@ -180,8 +178,6 @@ class MyGame(arcade.Window):
         self.spelling = Spelling(self.scene, self.player_sprite)
 
 
-
-
     def on_draw(self):
         """Render the screen."""
 
@@ -190,6 +186,7 @@ class MyGame(arcade.Window):
 
         # Activate the game camera
         self.camera.use()
+        
         # Draw our Scene
         self.scene.draw()
 

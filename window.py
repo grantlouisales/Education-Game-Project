@@ -13,6 +13,8 @@ import threading
 import time
 from constants import *
 from MenuView import *
+from read_words_file import *
+
 class Spelling():
     
     class Letter(arcade.Sprite):
@@ -57,7 +59,8 @@ class Spelling():
         self.generate_letters(LOCATIONS)
 
     def get_new_word(self):
-        self.curr_word = 'dragon'
+        list_words = get_easy_words()
+        self.curr_word = random.choice(list_words)
 
     def generate_letters(self, pos_list, prev_location=None):
         while True:

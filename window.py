@@ -37,14 +37,15 @@ class Spelling():
         self.scene.add_sprite(f'Letter', letter_sprite)
 
     def collect_letter(self, letter : Letter):
+        self.letters_collected.append(letter)
+        index = self.letters_collected.index(letter) + 1
+        letter.center_x, letter.center_y = (index * 50, 50)
+        
         self.clear_letters()
         self.next_letter()
 
         self.generate_letters(LOCATIONS, prev_location=letter.position)
 
-        self.letters_collected.append(letter)
-        index = self.letters_collected.index(letter) + 1
-        letter.center_x, letter.center_y = (index * 50, 50)
 
     def draw_gui(self):
         for letter in self.letters_collected:
@@ -75,11 +76,20 @@ class Spelling():
 
     def next_letter(self):
         index = self.curr_letter[1]
-        # if index == len(self.curr_word - 1):
-        #     test for correct word
-        self.curr_letter = (self.curr_word[index + 1], index + 1)
+        if index == len(self.curr_word) - 1:
+            if self.assemble_word() == self.curr_word:
+                self.get_new_word()
+                self.start_word()
+            else:
+                self.start_word()
+        else:
+            self.curr_letter = (self.curr_word[index + 1], index + 1)
 
-
+    def assemble_word(self):
+        word = ''
+        for letter in self.letters_collected:
+            word += letter.letter
+        return word
 
 class MyGame(arcade.Window):
     """
@@ -109,7 +119,7 @@ class MyGame(arcade.Window):
         self.left_pressed = False
         self.right_pressed = False
         
-        self.diff_level = MenuView.get_level()
+        
 
         
 
@@ -139,9 +149,9 @@ class MyGame(arcade.Window):
         self.camera = arcade.Camera(self.width, self.height)
         self.gui_camera = arcade.Camera(self.width, self.height)
 
-        # Name of map file to load
-#         map_name = "Map1Hard.json"
-        map_name = self.diff_level
+        #Name of map file to load
+        map_name = "Map1Hard.json"
+        #map_name = MenuView.get_level()
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -255,16 +265,16 @@ class MyGame(arcade.Window):
 def main():
     
     # """Main function"""
-#     window = MyGame()
-#     window.setup()
-#     arcade.run()
+    window = MyGame()
+    window.setup()
+    arcade.run()
     
     # Send users to main menu.
     # Commented out to avoid errors before seperating classes more professionally.
-    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    start_view = MenuView()
-    window.show_view(start_view)
-    arcade.run()
+    # window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    # start_view = MenuView()
+    # window.show_view(start_view)
+    # arcade.run()
 
 
 if __name__ == "__main__":

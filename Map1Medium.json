@@ -23,7 +23,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"terrain.png"
+         "image":"terrain.png"
         }],
  "tilewidth":32,
  "type":"map",

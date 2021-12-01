@@ -7,40 +7,78 @@ from arcade.scene import Scene
 from arcade.sprite import Sprite
 from arcade.sprite_list.spatial_hash import check_for_collision_with_list
 
+import random
+import string
+import threading
+import time
 from constants import *
-# from MenuView import *
-class Letters():
+from MenuView import *
+class Spelling():
     
     class Letter(arcade.Sprite):
         def __init__(self, letter, x, y):
-            super().__init__(f'resources/letters/letter{letter}.png', center_x=x, center_y=y, scale=.1)
+            super().__init__(f'resources/letters/letter{str.upper(letter)}.png', center_x=x, center_y=y, scale=.1)
             self.letter = letter
 
-    def __init__(self, scene : Scene):
-        self.collection = []
-        self.letters = arcade.SpriteList()
+    def __init__(self, scene : Scene, player : Sprite):
+        self.letters_collected = []
+        self.map_letters = arcade.SpriteList()
         self.scene = scene
+        self.curr_word = None
+        self.curr_letter = None
+        self.player = player
+
+        self.get_new_word()
+        self.start_word()
 
     def create_letter(self, letter : str, position):
         letter_sprite = self.Letter(letter, position[0], position[1])
-        self.letters.append(letter_sprite)
-        self.scene.add_sprite(f'Letter{letter}', letter_sprite)
+        self.map_letters.append(letter_sprite)
+        self.scene.add_sprite(f'Letter', letter_sprite)
 
     def collect_letter(self, letter : Letter):
-        self.collection.append(letter)
-        index = self.collection.index(letter) + 1
-        letter.center_x, letter.center_y = (index * 50, 50)
-        
-        self.letters.remove(letter)
-        self.scene.remove_sprite_list_by_name(f'Letter{letter.letter}')
+        self.clear_letters()
+        self.next_letter()
 
-    def draw(self, camera : Camera):
-        cam_x, cam_y = camera.position
-        screen_bot = cam_y - camera.viewport_height / 2
-        screen_left = cam_x - camera.viewport_width / 2
-        for letter in self.collection:
-            
+        self.generate_letters(LOCATIONS, prev_location=letter.position)
+
+        self.letters_collected.append(letter)
+        index = self.letters_collected.index(letter) + 1
+        letter.center_x, letter.center_y = (index * 50, 50)
+
+    def draw_gui(self):
+        for letter in self.letters_collected:
             letter.draw()
+
+    def start_word(self):
+        self.letters_collected = []
+        self.curr_letter = (self.curr_word[0], 0)
+        self.generate_letters(LOCATIONS)
+
+    def get_new_word(self):
+        self.curr_word = 'dragon'
+
+    def generate_letters(self, pos_list, prev_location=None):
+        while True:
+            locations = random.sample(pos_list, 3)
+            if not prev_location in locations:
+                break
+
+        letters = random.sample(string.ascii_lowercase, 2)
+        self.create_letter(self.curr_letter[0], locations.pop())
+        for place in locations:
+            self.create_letter(letters.pop(), place)
+
+    def clear_letters(self):
+        self.scene.remove_sprite_list_by_name('Letter')
+        self.map_letters = arcade.SpriteList()
+
+    def next_letter(self):
+        index = self.curr_letter[1]
+        # if index == len(self.curr_word - 1):
+        #     test for correct word
+        self.curr_letter = (self.curr_word[index + 1], index + 1)
+
 
 
 class MyGame(arcade.Window):
@@ -70,6 +108,8 @@ class MyGame(arcade.Window):
 
         self.left_pressed = False
         self.right_pressed = False
+        
+        self.diff_level = MenuView.get_level()
 
         
 
@@ -100,7 +140,8 @@ class MyGame(arcade.Window):
         self.gui_camera = arcade.Camera(self.width, self.height)
 
         # Name of map file to load
-        map_name = "Map1Medium.json"
+#         map_name = "Map1Hard.json"
+        map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -136,10 +177,7 @@ class MyGame(arcade.Window):
             self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Platforms"]
         )
 
-        self.letters = Letters(self.scene)
-        self.letters.create_letter('A', (1000, 1000))
-        self.letters.create_letter('B', (200, 100))
-        self.letters.create_letter('C', (100, 200))
+        self.spelling = Spelling(self.scene, self.player_sprite)
 
 
 
@@ -158,7 +196,7 @@ class MyGame(arcade.Window):
         # Activate the GUI camera before drawing GUI elements
         self.gui_camera.use()
 
-        self.letters.draw(self.camera)
+        self.spelling.draw_gui()
         arcade.draw_text(f'({self.player_sprite.center_x}, {self.player_sprite.center_y})', 10, SCREEN_HEIGHT - 20)
 
     def on_key_press(self, key, modifiers):
@@ -168,9 +206,12 @@ class MyGame(arcade.Window):
             self.left_pressed = True
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = True
-        elif key == arcade.key.SPACE or key == arcade.key.W:
-            if self.physics_engine.can_jump():
-                self.player_sprite.change_y = PLAYER_JUMP_SPEED
+        elif key == arcade.key.SPACE and self.physics_engine.can_jump():
+            self.player_sprite.change_y = PLAYER_JUMP_SPEED
+        elif key == arcade.key.C:
+            self.spelling.clear_letters()
+            self.spelling.start_word()
+        
 
     def on_key_release(self, key, modifiers):
         """Called when the user releases a key."""
@@ -207,22 +248,23 @@ class MyGame(arcade.Window):
         # Position the camera
         self.center_camera_to_player()
 
-        for letter in check_for_collision_with_list(self.player_sprite, self.letters.letters):
-            self.letters.collect_letter(letter)         
+        for letter in check_for_collision_with_list(self.player_sprite, self.spelling.map_letters):
+            self.spelling.collect_letter(letter)         
 
 
 def main():
     
     # """Main function"""
-    window = MyGame()
-    window.setup()
-    arcade.run()
+#     window = MyGame()
+#     window.setup()
+#     arcade.run()
     
     # Send users to main menu.
     # Commented out to avoid errors before seperating classes more professionally.
-    # window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    # window.show_view(MenuView.MenuView())
-    # arcade.run()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    start_view = MenuView()
+    window.show_view(start_view)
+    arcade.run()
 
 
 if __name__ == "__main__":

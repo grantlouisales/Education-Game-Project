@@ -1,6 +1,6 @@
 import arcade
 import window
-import InstructionView
+# import InstructionView
 import arcade.gui
 from constants import *
 
@@ -22,6 +22,8 @@ class MenuView(arcade.View):
 
         # Create a vertical BoxGroup to align buttons
         self.v_box = arcade.gui.UIBoxLayout()
+        
+        self.diff_level = None
 
         # Create the buttons
         easy_button = arcade.gui.UIFlatButton(text="Easy", width=200)
@@ -52,16 +54,22 @@ class MenuView(arcade.View):
         )
 
     def on_click_easy(self, _event: arcade.gui.UIOnClickEvent):
+        self.diff_level = "Map1Easy.json"
         game_view = window.MyGame()
         self.window.show_view(game_view)
 
     def on_click_medium(self, _event: arcade.gui.UIOnClickEvent):
+        self.diff_level = "Map1Medium.json"
         game_view = window.MyGame()
         self.window.show_view(game_view)
 
     def on_click_hard(self, _event: arcade.gui.UIOnClickEvent):
+        self.diff_level = "Map1Hard.json"
         game_view = window.MyGame()
         self.window.show_view(game_view)
+        
+    def get_level(self):
+        return self.diff_level
 
     def on_draw(self):
         arcade.start_render()

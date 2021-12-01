@@ -137,10 +137,10 @@ class MyGame(arcade.Window):
 
         # Setup the Cameras
         self.camera = arcade.Camera(self.width, self.height)
-        self.gui_camera = arcade.Camera(self.width, self.height)
+        #self.gui_camera = arcade.Camera(self.width, self.height)
 
         # Name of map file to load
-#         map_name = "Map1Hard.json"
+        #map_name = "Map1Hard.json"
         map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
@@ -194,9 +194,9 @@ class MyGame(arcade.Window):
         self.scene.draw()
 
         # Activate the GUI camera before drawing GUI elements
-        self.gui_camera.use()
+        #self.gui_camera.use()
 
-        self.spelling.draw_gui()
+        #self.spelling.draw_gui()
         arcade.draw_text(f'({self.player_sprite.center_x}, {self.player_sprite.center_y})', 10, SCREEN_HEIGHT - 20)
 
     def on_key_press(self, key, modifiers):

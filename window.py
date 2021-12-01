@@ -13,6 +13,8 @@ import threading
 import time
 from constants import *
 from MenuView import *
+from read_words_file import *
+
 class Spelling():
     
     class Letter(arcade.Sprite):
@@ -56,7 +58,8 @@ class Spelling():
         self.generate_letters(LOCATIONS)
 
     def get_new_word(self):
-        self.curr_word = 'dragon'
+        list_words = get_easy_words()
+        self.curr_word = random.choice(list_words)
 
     def generate_letters(self, pos_list, prev_location=None):
         while True:
@@ -138,7 +141,7 @@ class MyGame(arcade.Window):
         self.gui_camera = arcade.Camera(self.width, self.height)
 
         # Name of map file to load
-#         map_name = "Map1Hard.json"
+        # map_name = "Map1Hard.json"
         map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
@@ -252,9 +255,9 @@ class MyGame(arcade.Window):
 def main():
     
     # """Main function"""
-#     window = MyGame()
-#     window.setup()
-#     arcade.run()
+    # window = MyGame()
+    # window.setup()
+    # arcade.run()
     
     # Send users to main menu.
     # Commented out to avoid errors before seperating classes more professionally.

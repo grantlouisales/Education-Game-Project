@@ -41,28 +41,26 @@ class Spelling():
     def collect_letter(self, letter : Letter):
         self.letters_collected.append(letter)
         index = self.letters_collected.index(letter) + 1
-        letter.center_x, letter.center_y = (index * 50, 50)
         
         self.clear_letters()
-        self.next_letter()
+        self.next_letter(letter.position)
 
-        self.generate_letters(LOCATIONS, prev_location=letter.position)
-
+        letter.center_x, letter.center_y = (index * 50, 50)
 
     def draw_gui(self):
         for letter in self.letters_collected:
             letter.draw()
 
-    def start_word(self):
+    def start_word(self, prev_location=None):
         self.letters_collected = []
         self.curr_letter = (self.curr_word[0], 0)
-        self.generate_letters(LOCATIONS)
+        self.generate_letters(LOCATIONS, prev_location)
 
     def get_new_word(self):
         list_words = get_easy_words()
         self.curr_word = random.choice(list_words)
 
-    def generate_letters(self, pos_list, prev_location=None):
+    def generate_letters(self, pos_list, prev_location):
         while True:
             locations = random.sample(pos_list, 3)
             if not prev_location in locations:
@@ -77,16 +75,15 @@ class Spelling():
         self.scene.remove_sprite_list_by_name('Letter')
         self.map_letters = arcade.SpriteList()
 
-    def next_letter(self):
+    def next_letter(self, prev_location):
         index = self.curr_letter[1]
         if index == len(self.curr_word) - 1:
             if self.assemble_word() == self.curr_word:
                 self.get_new_word()
-                self.start_word()
-            else:
-                self.start_word()
+            self.start_word(prev_location=prev_location)
         else:
             self.curr_letter = (self.curr_word[index + 1], index + 1)
+            self.generate_letters(LOCATIONS, prev_location)
 
     def assemble_word(self):
         word = ''

@@ -119,10 +119,9 @@ class MyGame(arcade.Window):
         self.left_pressed = False
         self.right_pressed = False
         
-        
+        #self.diff_level = MenuView.get_level()
 
         
-
     # def setup(self):
     #     # Sprite List
     #     self.player_list = arcade.SpriteList()
@@ -149,9 +148,12 @@ class MyGame(arcade.Window):
         self.camera = arcade.Camera(self.width, self.height)
         self.gui_camera = arcade.Camera(self.width, self.height)
 
-        #Name of map file to load
-        map_name = "Map1Hard.json"
-        #map_name = MenuView.get_level()
+        # Name of map file to load
+        # map_name = "Map1Hard.json"
+        # map_name = self.diff_level
+        # map_name = "Map1Hard.json"
+        map_name = "Map1Medium.json"
+        # map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -190,8 +192,6 @@ class MyGame(arcade.Window):
         self.spelling = Spelling(self.scene, self.player_sprite)
 
 
-
-
     def on_draw(self):
         """Render the screen."""
 
@@ -200,13 +200,14 @@ class MyGame(arcade.Window):
 
         # Activate the game camera
         self.camera.use()
+        
         # Draw our Scene
         self.scene.draw()
 
         # Activate the GUI camera before drawing GUI elements
         self.gui_camera.use()
 
-        self.spelling.draw_gui()
+        #self.spelling.draw_gui()
         arcade.draw_text(f'({self.player_sprite.center_x}, {self.player_sprite.center_y})', 10, SCREEN_HEIGHT - 20)
 
     def on_key_press(self, key, modifiers):

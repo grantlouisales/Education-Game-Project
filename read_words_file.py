@@ -21,8 +21,4 @@ def get_hard_words():
         data = json.load(f)
 
         return data["hardWords"]
-
-
-print(get_easy_words())
-print(get_medium_words())
-print(get_hard_words())
+        

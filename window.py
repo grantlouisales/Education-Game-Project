@@ -54,7 +54,7 @@ class Spelling():
     def start_word(self, prev_location=None):
         self.letters_collected = []
         self.curr_letter = (self.curr_word[0], 0)
-        self.generate_letters(LOCATIONS, prev_location)
+        self.generate_letters(MED_LOCATIONS, prev_location)
 
     def get_new_word(self):
         list_words = get_easy_words()
@@ -83,7 +83,7 @@ class Spelling():
             self.start_word(prev_location=prev_location)
         else:
             self.curr_letter = (self.curr_word[index + 1], index + 1)
-            self.generate_letters(LOCATIONS, prev_location)
+            self.generate_letters(MED_LOCATIONS, prev_location)
 
     def assemble_word(self):
         word = ''
@@ -207,7 +207,7 @@ class MyGame(arcade.Window):
         # Activate the GUI camera before drawing GUI elements
         self.gui_camera.use()
 
-        #self.spelling.draw_gui()
+        self.spelling.draw_gui()
         arcade.draw_text(f'({self.player_sprite.center_x}, {self.player_sprite.center_y})', 10, SCREEN_HEIGHT - 20)
 
     def on_key_press(self, key, modifiers):

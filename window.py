@@ -48,7 +48,6 @@ class Spelling():
         letter.center_x, letter.center_y = (index * 50, 50)
 
     def draw_gui(self):
-
         for letter in self.letters_collected:
             letter.draw()
 
@@ -85,8 +84,10 @@ class Spelling():
         index = self.curr_letter[1]
         if index == len(self.curr_word) - 1:
             if self.assemble_word() == self.curr_word:
-                self.get_new_word()
+                self.get_new_word()            
             self.start_word(prev_location=prev_location)
+            self.draw_word = True
+            self.word_timer = 0 
         else:
             self.curr_letter = (self.curr_word[index + 1], index + 1)
             self.generate_letters(MED_LOCATIONS, prev_location)
@@ -96,6 +97,10 @@ class Spelling():
         for letter in self.letters_collected:
             word += letter.letter
         return word
+    
+    draw_word = True
+    word_timer = 0
+
 
 class MyGame(arcade.Window):
     """
@@ -215,7 +220,14 @@ class MyGame(arcade.Window):
 
         self.spelling.draw_gui()
         arcade.draw_text(f'({self.player_sprite.center_x}, {self.player_sprite.center_y})', 10, SCREEN_HEIGHT - 20)
-        arcade.draw_text(f'CURRENT WORD: {self.spelling.curr_word.upper()}', SCREEN_WIDTH/2, SCREEN_HEIGHT - 20, arcade.color.AMARANTH, 16, 100,"center","calibri", True)
+        if self.spelling.draw_word:
+            arcade.draw_text(f'CURRENT WORD: {self.spelling.curr_word.upper()}', SCREEN_WIDTH/2, SCREEN_HEIGHT - 20, arcade.color.AMARANTH, 16, 100,"center","calibri", True)
+            self.spelling.word_timer += 1
+            print(self.spelling.word_timer)
+            if self.spelling.word_timer >= WORD_MAX_TIME:
+
+                self.spelling.draw_word = False
+        
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""

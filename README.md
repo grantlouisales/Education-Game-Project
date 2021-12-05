@@ -10,6 +10,7 @@ The purpose to making this game was to make something to teach children. This is
 * [Software Demo Video](https://www.youtube.com/watch?v=3cpuDbguFDE)
 
 ## Development Enviorment
+
 * Google Firebase
 * Python 
 * Python Arcade

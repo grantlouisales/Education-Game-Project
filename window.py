@@ -50,6 +50,7 @@ class Spelling():
 
 
     def draw_gui(self):
+
         for letter in self.letters_collected:
             letter.draw()
 
@@ -65,13 +66,18 @@ class Spelling():
     def generate_letters(self, pos_list, prev_location=None):
         while True:
             locations = random.sample(pos_list, 3)
+            for location in locations:
+                print(location)
             if not prev_location in locations:
                 break
+            else:
+                print("Failed")
 
         letters = random.sample(string.ascii_lowercase, 2)
         self.create_letter(self.curr_letter[0], locations.pop())
         for place in locations:
             self.create_letter(letters.pop(), place)
+        print("--------------------------")
 
     def clear_letters(self):
         self.scene.remove_sprite_list_by_name('Letter')
@@ -210,8 +216,9 @@ class MyGame(arcade.Window):
         # Activate the GUI camera before drawing GUI elements
         self.gui_camera.use()
 
-        #self.spelling.draw_gui()
+        self.spelling.draw_gui()
         arcade.draw_text(f'({self.player_sprite.center_x}, {self.player_sprite.center_y})', 10, SCREEN_HEIGHT - 20)
+        arcade.draw_text(f'CURRENT WORD: {self.spelling.curr_word.upper()}', SCREEN_WIDTH/2, SCREEN_HEIGHT - 20, arcade.color.AMARANTH, 16, 100,"center","calibri", True)
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed."""

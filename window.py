@@ -22,16 +22,25 @@ class Spelling():
             super().__init__(f'resources/letters/letter{str.upper(letter)}.png', center_x=x, center_y=y, scale=.1)
             self.letter = letter
 
-    def __init__(self, scene : Scene, player : Sprite):
+    def __init__(self, scene : Scene, player : Sprite, map : string):
         self.letters_collected = []
         self.map_letters = arcade.SpriteList()
         self.scene = scene
         self.curr_word = None
         self.curr_letter = None
         self.player = player
+        self.locations = self.get_locations(map)
 
         self.get_new_word()
         self.start_word()
+
+    def get_locations(self, map : string):
+        if map == "Map1Hard.json":
+            return HARD_LOCATIONS
+        elif map == "Map1Medium.json":
+            return MED_LOCATIONS
+        else:
+            return EASY_LOCATIONS
 
     def create_letter(self, letter : str, position):
         letter_sprite = self.Letter(letter, position[0], position[1])
@@ -130,7 +139,7 @@ class MyGame(arcade.Window):
         self.left_pressed = False
         self.right_pressed = False
         
-        #self.diff_level = MenuView.get_level()
+        self.diff_level = MenuView.get_level(self)
 
         
     # def setup(self):
@@ -162,9 +171,9 @@ class MyGame(arcade.Window):
         # Name of map file to load
         # map_name = "Map1Hard.json"
         # map_name = self.diff_level
-        # map_name = "Map1Hard.json"
-        map_name = "Map1Medium.json"
-        # map_name = self.diff_level
+        #map_name = "Map1Hard.json"
+        #map_name = "Map1Medium.json"
+        map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -200,7 +209,7 @@ class MyGame(arcade.Window):
             self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Platforms"]
         )
 
-        self.spelling = Spelling(self.scene, self.player_sprite)
+        self.spelling = Spelling(self.scene, self.player_sprite, map_name)
 
 
     def on_draw(self):
@@ -285,16 +294,16 @@ class MyGame(arcade.Window):
 def main():
     
     # """Main function"""
-    window = MyGame()
-    window.setup()
-    arcade.run()
+    #window = MyGame()
+    #window.setup()
+    #arcade.run()
     
     # Send users to main menu.
     # Commented out to avoid errors before seperating classes more professionally.
-    # window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    # start_view = MenuView()
-    # window.show_view(start_view)
-    # arcade.run()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    start_view = MenuView()
+    window.show_view(start_view)
+    arcade.run()
 
 
 if __name__ == "__main__":

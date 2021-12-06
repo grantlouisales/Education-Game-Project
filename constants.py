@@ -16,7 +16,7 @@ GRAVITY = 1
 PLAYER_JUMP_SPEED = 20
 WORD_MAX_TIME = 400
 
-LOCATIONS = [
+HARD_LOCATIONS = [
     (1050, 200),
     (2600, 300),
     (2600, 800),
@@ -37,3 +37,5 @@ MED_LOCATIONS = [
     (425, 400),
     (1185, 400),
     ]
+
+EASY_LOCATIONS = []

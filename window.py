@@ -22,13 +22,13 @@ class Spelling():
             super().__init__(f'resources/letters/letter{str.upper(letter)}.png', center_x=x, center_y=y, scale=.1)
             self.letter = letter
 
-    def __init__(self, scene : Scene, player : Sprite):
+    def __init__(self, scene : Sprite):
         self.letters_collected = []
         self.map_letters = arcade.SpriteList()
         self.scene = scene
         self.curr_word = None
         self.curr_letter = None
-        self.player = player
+
 
         self.get_new_word()
         self.start_word()
@@ -102,15 +102,15 @@ class Spelling():
     word_timer = 0
 
 
-class MyGame(arcade.Window):
+class MyGame(arcade.View):
     """
     Main application class.
     """
 
-    def __init__(self):
+    def __init__(self, difficulty):
 
         # Call the parent class and set up the window
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        super().__init__()
 
         # Our TileMap Object
         self.tile_map = None
@@ -130,7 +130,7 @@ class MyGame(arcade.Window):
         self.left_pressed = False
         self.right_pressed = False
         
-        #self.diff_level = MenuView.get_level()
+        self.diff_level = difficulty
 
         
     # def setup(self):
@@ -156,15 +156,14 @@ class MyGame(arcade.Window):
         """Set up the game here. Call this function to restart the game."""
 
         # Setup the Cameras
-        self.camera = arcade.Camera(self.width, self.height)
-        self.gui_camera = arcade.Camera(self.width, self.height)
+        self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.gui_camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Name of map file to load
         # map_name = "Map1Hard.json"
-        # map_name = self.diff_level
         # map_name = "Map1Hard.json"
-        map_name = "Map1Medium.json"
-        # map_name = self.diff_level
+        # map_name = "Map1Medium.json"
+        map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -200,7 +199,7 @@ class MyGame(arcade.Window):
             self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Platforms"]
         )
 
-        self.spelling = Spelling(self.scene, self.player_sprite)
+        self.spelling = Spelling(self.scene)
 
 
     def on_draw(self):
@@ -284,17 +283,17 @@ class MyGame(arcade.Window):
 
 def main():
     
-    # """Main function"""
-    window = MyGame()
-    window.setup()
-    arcade.run()
+    # # """Main function"""
+    # window = MyGame()
+    # window.setup()
+    # arcade.run()
     
     # Send users to main menu.
     # Commented out to avoid errors before seperating classes more professionally.
-    # window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    # start_view = MenuView()
-    # window.show_view(start_view)
-    # arcade.run()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    start_view = MenuView()
+    window.show_view(start_view)
+    arcade.run()
 
 
 if __name__ == "__main__":

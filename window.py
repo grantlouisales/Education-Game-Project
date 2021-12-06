@@ -22,13 +22,13 @@ class Spelling():
             super().__init__(f'resources/letters/letter{str.upper(letter)}.png', center_x=x, center_y=y, scale=.1)
             self.letter = letter
 
-    def __init__(self, scene : Scene, player : Sprite):
+    def __init__(self, scene : Sprite):
         self.letters_collected = []
         self.map_letters = arcade.SpriteList()
         self.scene = scene
         self.curr_word = None
         self.curr_letter = None
-        self.player = player
+
 
         self.get_new_word()
         self.start_word()
@@ -200,7 +200,7 @@ class MyGame(arcade.Window):
             self.player_sprite, gravity_constant=GRAVITY, walls=self.scene["Platforms"]
         )
 
-        self.spelling = Spelling(self.scene, self.player_sprite)
+        self.spelling = Spelling(self.scene)
 
 
     def on_draw(self):

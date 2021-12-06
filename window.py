@@ -178,10 +178,10 @@ class MyGame(arcade.View):
         self.gui_camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Name of map file to load
-        # map_name = "Map1Hard.json"
+        map_name = "Map1Easy.json"
         # map_name = "Map1Hard.json"
         # map_name = "Map1Medium.json"
-        map_name = self.diff_level
+        # map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -301,7 +301,7 @@ class MyGame(arcade.View):
 def main():
     
     # # """Main function"""
-    # window = MyGame()
+    # window = MyGame("Map1Easy.json")
     # window.setup()
     # arcade.run()
     

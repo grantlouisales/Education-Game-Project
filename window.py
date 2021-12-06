@@ -29,18 +29,27 @@ class Spelling():
         self.curr_word = None
         self.curr_letter = None
         self.player = player
-        self.locations = self.get_locations(map)
+        self.map = map
+        self.locations = self.get_locations()
 
         self.get_new_word()
         self.start_word()
 
-    def get_locations(self, map : string):
-        if map == "Map1Hard.json":
+    def get_locations(self):
+        if self.map == "Map1Hard.json":
             return HARD_LOCATIONS
-        elif map == "Map1Medium.json":
+        elif self.map == "Map1Medium.json":
             return MED_LOCATIONS
         else:
             return EASY_LOCATIONS
+
+    def get_words_list(self):
+        if self.map == "Map1Hard.json":
+            return get_hard_words()
+        elif self.map == "Map1Medium.json":
+            return get_medium_words()
+        else:
+            return get_easy_words()
 
     def create_letter(self, letter : str, position):
         letter_sprite = self.Letter(letter, position[0], position[1])
@@ -63,10 +72,10 @@ class Spelling():
     def start_word(self, prev_location=None):
         self.letters_collected = []
         self.curr_letter = (self.curr_word[0], 0)
-        self.generate_letters(MED_LOCATIONS, prev_location)
+        self.generate_letters(self.locations, prev_location)
 
     def get_new_word(self):
-        list_words = get_easy_words()
+        list_words = self.get_words_list()
         self.curr_word = random.choice(list_words)
 
     def generate_letters(self, pos_list, prev_location):
@@ -99,7 +108,7 @@ class Spelling():
             self.word_timer = 0 
         else:
             self.curr_letter = (self.curr_word[index + 1], index + 1)
-            self.generate_letters(MED_LOCATIONS, prev_location)
+            self.generate_letters(self.locations, prev_location)
 
     def assemble_word(self):
         word = ''
@@ -111,15 +120,15 @@ class Spelling():
     word_timer = 0
 
 
-class MyGame(arcade.Window):
+class MyGame(arcade.View):
     """
     Main application class.
     """
 
-    def __init__(self):
+    def __init__(self, difficulty):
 
         # Call the parent class and set up the window
-        super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+        super().__init__()
 
         # Our TileMap Object
         self.tile_map = None
@@ -139,7 +148,7 @@ class MyGame(arcade.Window):
         self.left_pressed = False
         self.right_pressed = False
         
-        self.diff_level = MenuView.get_level(self)
+        self.diff_level = difficulty
 
         
     # def setup(self):
@@ -165,14 +174,13 @@ class MyGame(arcade.Window):
         """Set up the game here. Call this function to restart the game."""
 
         # Setup the Cameras
-        self.camera = arcade.Camera(self.width, self.height)
-        self.gui_camera = arcade.Camera(self.width, self.height)
+        self.camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
+        self.gui_camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Name of map file to load
         # map_name = "Map1Hard.json"
-        # map_name = self.diff_level
-        #map_name = "Map1Hard.json"
-        #map_name = "Map1Medium.json"
+        # map_name = "Map1Hard.json"
+        # map_name = "Map1Medium.json"
         map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
@@ -232,7 +240,6 @@ class MyGame(arcade.Window):
         if self.spelling.draw_word:
             arcade.draw_text(f'CURRENT WORD: {self.spelling.curr_word.upper()}', SCREEN_WIDTH/2, SCREEN_HEIGHT - 20, arcade.color.AMARANTH, 16, 100,"center","calibri", True)
             self.spelling.word_timer += 1
-            print(self.spelling.word_timer)
             if self.spelling.word_timer >= WORD_MAX_TIME:
 
                 self.spelling.draw_word = False
@@ -293,10 +300,10 @@ class MyGame(arcade.Window):
 
 def main():
     
-    # """Main function"""
-    #window = MyGame()
-    #window.setup()
-    #arcade.run()
+    # # """Main function"""
+    # window = MyGame()
+    # window.setup()
+    # arcade.run()
     
     # Send users to main menu.
     # Commented out to avoid errors before seperating classes more professionally.

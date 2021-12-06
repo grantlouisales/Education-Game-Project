@@ -223,7 +223,7 @@ class MyGame(arcade.Window):
         if self.spelling.draw_word:
             arcade.draw_text(f'CURRENT WORD: {self.spelling.curr_word.upper()}', SCREEN_WIDTH/2, SCREEN_HEIGHT - 20, arcade.color.AMARANTH, 16, 100,"center","calibri", True)
             self.spelling.word_timer += 1
-            print(self.spelling.word_timer)
+            # print(self.spelling.word_timer)
             if self.spelling.word_timer >= WORD_MAX_TIME:
 
                 self.spelling.draw_word = False

@@ -178,10 +178,10 @@ class MyGame(arcade.View):
         self.gui_camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Name of map file to load
-        map_name = "Map1Easy.json"
+        # map_name = "Map1Easy.json"
         # map_name = "Map1Hard.json"
         # map_name = "Map1Medium.json"
-        # map_name = self.diff_level
+        map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
         # Doing this will make the SpriteList for the platforms layer
@@ -252,8 +252,11 @@ class MyGame(arcade.View):
             self.left_pressed = True
         elif key == arcade.key.RIGHT or key == arcade.key.D:
             self.right_pressed = True
-        elif key == arcade.key.SPACE and self.physics_engine.can_jump():
+        elif (key == arcade.key.SPACE or key == arcade.key.UP or key == arcade.key.W) and self.physics_engine.can_jump():
             self.player_sprite.change_y = PLAYER_JUMP_SPEED
+        # Yes, this is for cheating
+        elif key == arcade.key.DOWN:
+            self.player_sprite.change_y = PLAYER_JUMP_SPEED 
         elif key == arcade.key.C:
             self.spelling.clear_letters()
             self.spelling.start_word()

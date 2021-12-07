@@ -150,8 +150,8 @@ class MyGame(arcade.View):
         
         self.diff_level = difficulty
 
-        self.audio_name = arcade.sound.load_sound("audio/[MP3DOWNLOAD.TO] Berserk - My Brother (Extended) (Definitive Version)-320k.mp3")
-        arcade.sound.play_sound(self.audio_name)
+        self.audio_name = arcade.sound.load_sound("audio/2021-09-08_-_Castle_Of_Fear_-_www.FesliyanStudios.com.mp3")
+        arcade.sound.play_sound(self.audio_name,.5)
 
         
     # def setup(self):

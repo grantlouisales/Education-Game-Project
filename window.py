@@ -1,6 +1,3 @@
-"""
-Platformer Game
-"""
 import arcade
 from arcade.camera import Camera
 from arcade.scene import Scene
@@ -24,7 +21,7 @@ class MyGame(arcade.View):
 
     def __init__(self, difficulty):
         """ Initialize """
-        
+
         # Call the parent class and set up the window
         super().__init__()
 
@@ -46,8 +43,10 @@ class MyGame(arcade.View):
         self.left_pressed = False
         self.right_pressed = False
         
+        # Get difficulty level from MainMenu
         self.diff_level = difficulty
 
+        # Set up background music
         self.audio_name = arcade.sound.load_sound("audio/2021-09-08_-_Castle_Of_Fear_-_www.FesliyanStudios.com.mp3")
         arcade.sound.play_sound(self.audio_name,.2)
 
@@ -115,11 +114,11 @@ class MyGame(arcade.View):
 
         self.spelling.draw_gui()
         arcade.draw_text(f'({self.player_sprite.center_x}, {self.player_sprite.center_y})', 10, SCREEN_HEIGHT - 20)
+
         if self.spelling.draw_word:
             arcade.draw_text(f'CURRENT WORD: {self.spelling.curr_word.upper()}', SCREEN_WIDTH/2, SCREEN_HEIGHT - 20, arcade.color.AMARANTH, 16, 100,"center","calibri", True)
             self.spelling.word_timer += 1
             if self.spelling.word_timer >= WORD_MAX_TIME:
-
                 self.spelling.draw_word = False
         
 

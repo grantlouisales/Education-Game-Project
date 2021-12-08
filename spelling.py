@@ -59,11 +59,10 @@ class Spelling():
 
     def collect_letter(self, letter : Letter):
         # Play sound Accordingly, depending on the letters collected!!!
-        if letter.letter in self.curr_word:
-            arcade.play_sound(self.correct_ping)
-        else:
-
-            arcade.play_sound(self.error_ping)
+        # if letter.letter in self.curr_word:
+        #     arcade.play_sound(self.correct_ping)
+        # else:
+        #     arcade.play_sound(self.error_ping)
         self.letters_collected.append(letter)
     
        
@@ -113,7 +112,10 @@ class Spelling():
         index = self.curr_letter[1]
         if index == len(self.curr_word) - 1:
             if self.assemble_word() == self.curr_word:
+                arcade.play_sound(self.correct_ping)
                 self.get_new_word(old_word=self.curr_word) 
+            else:
+                arcade.play_sound(self.error_ping)
                 
             self.start_word(prev_location=prev_location)
             self.draw_word = True

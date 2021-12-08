@@ -132,7 +132,7 @@ class MyGame(arcade.View):
         elif (key == arcade.key.SPACE or key == arcade.key.UP or key == arcade.key.W) and self.physics_engine.can_jump():
             self.player_sprite.change_y = PLAYER_JUMP_SPEED
         # Yes, this is for cheating, I mean testing
-        elif key == arcade.key.DOWN:
+        elif key == arcade.key.DOWN or key == arcade.key.S:
             self.player_sprite.change_y = PLAYER_JUMP_SPEED 
         elif key == arcade.key.C:
             self.spelling.clear_letters()

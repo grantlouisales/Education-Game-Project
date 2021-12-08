@@ -30,26 +30,24 @@ class Spelling():
         self.curr_letter = None
         self.player = player
         self.map = map
-        self.locations = self.get_locations()
 
+        self.set_difficulty()
         self.get_new_word()
         self.start_word()
 
-    def get_locations(self):
+    def set_difficulty(self):
         if self.map == "Map1Hard.json":
-            return HARD_LOCATIONS
+            self.locations = HARD_LOCATIONS
+            self.words_list = get_hard_words()
+            self.num_spawns = 5
         elif self.map == "Map1Medium.json":
-            return MED_LOCATIONS
+            self.locations = MED_LOCATIONS
+            self.words_list = get_medium_words()
+            self.num_spawns = 3
         else:
-            return EASY_LOCATIONS
-
-    def get_words_list(self):
-        if self.map == "Map1Hard.json":
-            return get_hard_words()
-        elif self.map == "Map1Medium.json":
-            return get_medium_words()
-        else:
-            return get_easy_words()
+            self.locations = EASY_LOCATIONS
+            self.words_list = get_easy_words()
+            self.num_spawns = 2
 
     def create_letter(self, letter : str, position):
         letter_sprite = self.Letter(letter, position[0], position[1])
@@ -75,24 +73,18 @@ class Spelling():
         self.generate_letters(self.locations, prev_location)
 
     def get_new_word(self):
-        list_words = self.get_words_list()
-        self.curr_word = random.choice(list_words)
+        self.curr_word = random.choice(self.words_list)
 
     def generate_letters(self, pos_list, prev_location):
         while True:
-            locations = random.sample(pos_list, 3)
-            for location in locations:
-                print(location)
+            locations = random.sample(pos_list, self.num_spawns)
             if not prev_location in locations:
                 break
-            else:
-                print("Failed")
 
-        letters = random.sample(string.ascii_lowercase, 2)
+        letters = random.sample(string.ascii_lowercase, self.num_spawns - 1)
         self.create_letter(self.curr_letter[0], locations.pop())
         for place in locations:
             self.create_letter(letters.pop(), place)
-        print("--------------------------")
 
     def clear_letters(self):
         self.scene.remove_sprite_list_by_name('Letter')

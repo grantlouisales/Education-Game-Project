@@ -1,6 +1,3 @@
-"""
-Platformer Game
-"""
 import arcade
 from arcade.camera import Camera
 from arcade.scene import Scene
@@ -14,6 +11,7 @@ import time
 from constants import *
 from MenuView import *
 from read_words_file import *
+from spelling import *
 
 class Spelling():
     
@@ -118,6 +116,7 @@ class MyGame(arcade.View):
     """
 
     def __init__(self, difficulty):
+        """ Initialize """
 
         # Call the parent class and set up the window
         super().__init__()
@@ -140,30 +139,12 @@ class MyGame(arcade.View):
         self.left_pressed = False
         self.right_pressed = False
         
+        # Get difficulty level from MainMenu
         self.diff_level = difficulty
 
-        self.audio_name = arcade.sound.load_sound("audio/[MP3DOWNLOAD.TO] Berserk - My Brother (Extended) (Definitive Version)-320k.mp3")
-        arcade.sound.play_sound(self.audio_name)
-
-        
-    # def setup(self):
-    #     # Sprite List
-    #     self.player_list = arcade.SpriteList()
-    #     self.ground_list = arcade.SpriteList()
-
-    #     # Set up player
-    #     self.player_sprite = Player(":resources:images/animated_characters/female_person/femalePerson_idle.png", SPRITE_SCALING * 2)
-    #     self.player_sprite.center_x = 32
-    #     self.player_sprite.center_y = 130
-    #     self.player_list.append(self.player_sprite)
-
-    #     # Set up physics engine
-    #     self.physics_engine = arcade.PhysicsEnginePlatformer(self.player_sprite, self.ground_list, gravity_constant=GRAVITY)
- 
-    #     # Set up camera
-    #     self.camera = arcade.Camera(self.width, self.height)
-
-    #     arcade.set_background_color(arcade.csscolor.CORNFLOWER_BLUE)
+        # Set up background music
+        self.audio_name = arcade.sound.load_sound("audio/2021-09-08_-_Castle_Of_Fear_-_www.FesliyanStudios.com.mp3")
+        arcade.sound.play_sound(self.audio_name,.2)
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
@@ -173,9 +154,6 @@ class MyGame(arcade.View):
         self.gui_camera = arcade.Camera(SCREEN_WIDTH, SCREEN_HEIGHT)
 
         # Name of map file to load
-        # map_name = "Map1Easy.json"
-        # map_name = "Map1Hard.json"
-        # map_name = "Map1Medium.json"
         map_name = self.diff_level
 
         # Layer specific options are defined based on Layer names in a dictionary
@@ -232,11 +210,11 @@ class MyGame(arcade.View):
 
         self.spelling.draw_gui()
         arcade.draw_text(f'({self.player_sprite.center_x}, {self.player_sprite.center_y})', 10, SCREEN_HEIGHT - 20)
+
         if self.spelling.draw_word:
             arcade.draw_text(f'CURRENT WORD: {self.spelling.curr_word.upper()}', SCREEN_WIDTH/2, SCREEN_HEIGHT - 20, arcade.color.AMARANTH, 16, 100,"center","calibri", True)
             self.spelling.word_timer += 1
             if self.spelling.word_timer >= WORD_MAX_TIME:
-
                 self.spelling.draw_word = False
         
 
@@ -249,8 +227,8 @@ class MyGame(arcade.View):
             self.right_pressed = True
         elif (key == arcade.key.SPACE or key == arcade.key.UP or key == arcade.key.W) and self.physics_engine.can_jump():
             self.player_sprite.change_y = PLAYER_JUMP_SPEED
-        # Yes, this is for cheating
-        elif key == arcade.key.DOWN:
+        # Yes, this is for cheating, I mean testing
+        elif key == arcade.key.DOWN or key == arcade.key.S:
             self.player_sprite.change_y = PLAYER_JUMP_SPEED 
         elif key == arcade.key.C:
             self.spelling.clear_letters()
@@ -266,6 +244,8 @@ class MyGame(arcade.View):
             self.right_pressed = False
 
     def center_camera_to_player(self):
+        """Ensures the camera is centered on the player."""
+
         screen_center_x = self.player_sprite.center_x - \
             (self.camera.viewport_width / 2)
         screen_center_y = self.player_sprite.center_y - (
@@ -293,23 +273,5 @@ class MyGame(arcade.View):
         self.center_camera_to_player()
 
         for letter in check_for_collision_with_list(self.player_sprite, self.spelling.map_letters):
-            self.spelling.collect_letter(letter)         
-
-
-def main():
-    
-    # # """Main function"""
-    # window = MyGame("Map1Easy.json")
-    # window.setup()
-    # arcade.run()
-    
-    # Send users to main menu.
-    # Commented out to avoid errors before seperating classes more professionally.
-    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    start_view = MenuView()
-    window.show_view(start_view)
-    arcade.run()
-
-
-if __name__ == "__main__":
-    main()
+            self.spelling.collect_letter(letter)
+              

@@ -81,6 +81,8 @@ class MenuView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_text("Educational Education Game of Learning", SCREEN_WIDTH / 2, SCREEN_HEIGHT -150,
-                         arcade.color.BLACK, font_size=40, anchor_x="center")
+        arcade.draw_text("Educational Education Game", SCREEN_WIDTH / 2, SCREEN_HEIGHT -150,
+                         arcade.color.DEEP_SAFFRON, font_size=80, anchor_x="center", font_name="Kenney Pixel")
+        arcade.draw_text("of Learning", SCREEN_WIDTH / 2, SCREEN_HEIGHT -220,
+                         arcade.color.DEEP_SAFFRON, font_size=80, anchor_x="center", font_name="Kenney Pixel")
         self.manager.draw()

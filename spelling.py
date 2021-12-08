@@ -19,6 +19,8 @@ class Spelling():
         def __init__(self, letter, x, y):
             super().__init__(f'resources/letters/letter{str.upper(letter)}.png', center_x=x, center_y=y, scale=.1)
             self.letter = letter
+             
+
 
     def __init__(self, scene : Scene, player : Sprite, map : string):
         self.letters_collected = []
@@ -29,7 +31,8 @@ class Spelling():
         self.player = player
         self.map = map
         self.locations = self.get_locations()
-
+        self.correct_ping = arcade.sound.load_sound("audio/correct_ping.mp3")
+        self.error_ping = arcade.sound.load_sound("audio/error_ping.mp3")
         self.get_new_word()
         self.start_word()
 
@@ -55,9 +58,16 @@ class Spelling():
         self.scene.add_sprite(f'Letter', letter_sprite)
 
     def collect_letter(self, letter : Letter):
+        # Play sound Accordingly, depending on the letters collected!!!
+        if letter.letter in self.curr_word:
+            arcade.play_sound(self.correct_ping)
+        else:
+
+            arcade.play_sound(self.error_ping)
         self.letters_collected.append(letter)
+    
+       
         index = self.letters_collected.index(letter) + 1
-        
         self.clear_letters()
         self.next_letter(letter.position)
 
@@ -72,9 +82,12 @@ class Spelling():
         self.curr_letter = (self.curr_word[0], 0)
         self.generate_letters(self.locations, prev_location)
 
-    def get_new_word(self):
+    def get_new_word(self, old_word = None):
         list_words = self.get_words_list()
-        self.curr_word = random.choice(list_words)
+        test_word = random.choice(list_words)
+        if not test_word == old_word:
+            self.curr_word = test_word
+
 
     def generate_letters(self, pos_list, prev_location):
         while True:
@@ -100,7 +113,8 @@ class Spelling():
         index = self.curr_letter[1]
         if index == len(self.curr_word) - 1:
             if self.assemble_word() == self.curr_word:
-                self.get_new_word()            
+                self.get_new_word(old_word=self.curr_word) 
+                
             self.start_word(prev_location=prev_location)
             self.draw_word = True
             self.word_timer = 0 

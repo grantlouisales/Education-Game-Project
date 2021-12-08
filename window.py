@@ -152,7 +152,7 @@ class MyGame(arcade.View):
         self.diff_level = difficulty
 
         self.audio_name = arcade.sound.load_sound("audio/2021-09-08_-_Castle_Of_Fear_-_www.FesliyanStudios.com.mp3")
-        arcade.sound.play_sound(self.audio_name,.5)
+        # arcade.sound.play_sound(self.audio_name,.5)
 
     def setup(self):
         """Set up the game here. Call this function to restart the game."""
@@ -279,4 +279,5 @@ class MyGame(arcade.View):
         self.center_camera_to_player()
 
         for letter in check_for_collision_with_list(self.player_sprite, self.spelling.map_letters):
-            self.spelling.collect_letter(letter)         
+            self.spelling.collect_letter(letter)
+              
